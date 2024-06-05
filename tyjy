@@ -1,0 +1,72 @@
+import pygame
+import random
+
+# 初始化Pygame
+pygame.init()
+
+# 设置屏幕大小
+screen_width = 800
+screen_height = 600
+screen = pygame.display.set_mode((screen_width, screen_height))
+pygame.display.set_caption("Contra")
+
+# 定义颜色
+white = (255, 255, 255)
+blue = (0, 0, 255)
+red = (255, 0, 0)
+
+# 定义游戏时钟
+clock = pygame.time.Clock()
+
+# 定义玩家类
+class Player(pygame.sprite.Sprite):
+    def __init__(self):
+        super().__init__()
+        self.image = pygame.Surface([40, 40])
+        self.image.fill(blue)
+        self.rect = self.image.get_rect()
+        self.rect.x = 50
+        self.rect.y = screen_height // 2
+        self.speed = 5
+
+    def update(self):
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_LEFT] and self.rect.x > 0:
+            self.rect.x -= self.speed
+        if keys[pygame.K_RIGHT] and self.rect.x < screen_width - 40:
+            self.rect.x += self.speed
+        if keys[pygame.K_UP] and self.rect.y > 0:
+            self.rect.y -= self.speed
+        if keys[pygame.K_DOWN] and self.rect.y < screen_height - 40:
+            self.rect.y += self.speed
+
+# 定义敌人类
+class Enemy(pygame.sprite.Sprite):
+    def __init__(self, x, y):
+        super().__init__()
+        self.image = pygame.Surface([40, 40])
+        self.image.fill(red)
+        self.rect = self.image.get_rect()
+        self.rect.x = x
+        self.rect.y = y
+        self.speed = random.randint(1, 3)
+
+    def update(self):
+        self.rect.x -= self.speed
+        if self.rect.x < 0:
+            self.kill()
+
+# 定义子弹类
+class Bullet(pygame.sprite.Sprite):
+    def __init__(self, x, y):
+        super().__init__()
+        self.image = pygame.Surface([10, 5])
+        self.image.fill(white)
+        self.rect = self.image.get_rect()
+        self.rect.x = x
+        self.rect.y = y
+        self.speed = 10
+
+    def update(self):
+        self.rect.x += self.speed
+        if self.rect.x > screen_width:
